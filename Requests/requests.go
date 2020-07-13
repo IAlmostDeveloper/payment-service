@@ -3,6 +3,7 @@ package requests
 import (
 	dbaccess "PaymentAPI/DBAccess"
 	entities "PaymentAPI/Entities"
+	service "PaymentAPI/Service"
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
@@ -38,17 +39,25 @@ func paymentRequest(w http.ResponseWriter, r *http.Request) {
 		w.Write(js)
 		fmt.Println(string(js))
 		break
-	case "PUT":
-		var paymentResponse entities.PaymentSession
-		json.NewDecoder(r.Body).Decode(&paymentResponse)
-		dbaccess.MakePaymentComplete(paymentResponse.SessionId)
-		break
 	}
 }
 
 func validateCardRequest(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST"{
-		
+	if r.Method == "POST" {
+		var cardData entities.CardData
+		json.NewDecoder(r.Body).Decode(&cardData)
+		var response entities.CardValidationResponse
+		if service.ValidateCard(cardData) {
+			response.Error = ""
+		} else {
+			response.Error = "Invalid card."
+		}
+		js, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Write(js)
 	}
 }
 

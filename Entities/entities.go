@@ -24,3 +24,7 @@ type CardData struct {
 	ExpireDate string `json:"expire_date"`
 	SessionId  string `json:"session_id"`
 }
+
+type CardValidationResponse struct{
+	Error string `json:"error"`
+}
