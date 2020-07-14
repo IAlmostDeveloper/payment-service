@@ -1,3 +1,4 @@
+// swagger: meta
 package requests
 
 import (
@@ -6,6 +7,7 @@ import (
 	service "PaymentAPI/Service"
 	"encoding/json"
 	"fmt"
+	"github.com/go-openapi/runtime/middleware"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"log"
@@ -49,6 +51,7 @@ func validateCardRequest(w http.ResponseWriter, r *http.Request) {
 		var response entities.CardValidationResponse
 		if service.ValidateCard(cardData) {
 			response.Error = ""
+			dbaccess.MakePaymentComplete(cardData.SessionId)
 		} else {
 			response.Error = "Invalid card."
 		}
@@ -65,5 +68,11 @@ func HandleRequests() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/payment", paymentRequest)
 	router.HandleFunc("/validate", validateCardRequest)
+
+	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
+	sh := middleware.Redoc(opts, nil)
+
+	router.Handle("/docs", sh)
+	router.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

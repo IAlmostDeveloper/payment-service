@@ -1,0 +1,86 @@
+openapi: 3.0.0
+info:
+  title: Payment API
+  description: Service for making payments by credit card
+  version: 1.0.0
+paths:
+  /payment:
+    get:
+      summary: Returns a payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionId'
+            example:
+              session_id: ecef274b-c4d9-11ea-9c98-16e54378dfba
+      responses:
+        '200':    # status code
+          description: A payment JSON object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentData'
+              example:
+                id: 42
+                sum: 50000
+                purpose: An example payment
+                session_id: ecef274b-c4d9-11ea-9c98-16e54378dfba
+                completed: false
+    post:
+      summary: Creates payment and returns session_id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentRequest'
+            example:
+              sum: 50000
+              purpose: An example payment
+      responses:
+        '200':    # status code
+          description: A payment JSON object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionId'
+              example:
+                session_id: ecef274b-c4d9-11ea-9c98-16e54378dfba
+
+components:
+  schemas:
+    SessionId:
+      title: a payment request
+      type: object
+      properties:
+        session_id:
+          type: string
+          description: a payment session id
+      required:
+        - session_id
+    PaymentData:
+      title: a payment JSON object
+      type: object
+      properties:
+        id:
+          type: integer
+        sum:
+          type: integer
+        purpose:
+          type: string
+        session_id:
+          type: string
+        completed:
+          type: boolean
+    CreatePaymentRequest:
+      title: a payment data JSON object
+      type: object
+      properties:
+        sum:
+          type: integer
+        purpose:
+          type: string
+            
+    
