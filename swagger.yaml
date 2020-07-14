@@ -6,7 +6,7 @@ info:
 paths:
   /payment:
     get:
-      summary: Returns a payment
+      summary: Gets payment by session_id
       requestBody:
         required: true
         content:
@@ -48,11 +48,34 @@ paths:
                 $ref: '#/components/schemas/SessionId'
               example:
                 session_id: ecef274b-c4d9-11ea-9c98-16e54378dfba
-
+  /validate:
+    post:
+      summary: Validates card and makes payment completed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreditCardData'
+            example:
+              user: Alex Petrov
+              number: "4561261212345467"
+              cvv: 765
+              expire_date: 03/22
+              session_id: ecef274b-c4d9-11ea-9c98-16e54378dfba
+      responses:
+        '200':    # status code
+          description: A payment JSON object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: ""
 components:
   schemas:
     SessionId:
-      title: a payment request
+      title: session id
       type: object
       properties:
         session_id:
@@ -61,7 +84,7 @@ components:
       required:
         - session_id
     PaymentData:
-      title: a payment JSON object
+      title: a payment
       type: object
       properties:
         id:
@@ -75,12 +98,32 @@ components:
         completed:
           type: boolean
     CreatePaymentRequest:
-      title: a payment data JSON object
+      title: a payment data
       type: object
       properties:
         sum:
           type: integer
         purpose:
+          type: string
+    CreditCardData:
+      title: credit card data
+      type: object
+      properties:
+        user:
+          type: string
+        number:
+          type: string
+        cvv:
+          type: integer
+        expire_date:
+          type: string
+        session_id:
+          type: string
+    Error:
+      title: error object
+      type: object
+      properties:
+        error:
           type: string
             
     
