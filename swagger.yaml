@@ -27,7 +27,9 @@ paths:
                 sum: 50000
                 purpose: An example payment
                 session_id: ecef274b-c4d9-11ea-9c98-16e54378dfba
-                completed: false
+                expire_time: 2020-07-22 20:22:06.3006211 +0300 MSK
+                completed: true
+                card: "4561261212345467"
     post:
       summary: Creates payment and returns session_id
       requestBody:
@@ -95,8 +97,12 @@ components:
           type: string
         session_id:
           type: string
+        expire_time:
+          type: string
         completed:
           type: boolean
+        card:
+          type: string
     CreatePaymentRequest:
       title: a payment data
       type: object
