@@ -2,7 +2,7 @@ package main
 
 import (
 	dbaccess "payment-service/DBAccess"
-	"payment-service/Requests"
+	requests "payment-service/Requests"
 )
 
 func main() {

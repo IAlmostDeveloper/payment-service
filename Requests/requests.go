@@ -2,9 +2,6 @@
 package requests
 
 import (
-	dbaccess "payment-service/DBAccess"
-	entities "payment-service/Entities"
-	service "payment-service/Service"
 	"encoding/json"
 	"fmt"
 	"github.com/go-openapi/runtime/middleware"
@@ -12,6 +9,10 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	dbaccess "payment-service/DBAccess"
+	entities "payment-service/Entities"
+	service "payment-service/Service"
+	"time"
 )
 
 func paymentRequest(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +38,7 @@ func paymentRequest(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		dbaccess.InsertPayment(payment, id.String())
+		dbaccess.InsertPayment(payment, id.String(), time.Now().AddDate(0, 0, 7).String())
 		w.Write(js)
 		fmt.Println(string(js))
 		break
@@ -50,8 +51,13 @@ func validateCardRequest(w http.ResponseWriter, r *http.Request) {
 		json.NewDecoder(r.Body).Decode(&cardData)
 		var response entities.CardValidationResponse
 		if service.ValidateCard(cardData) {
-			response.Error = ""
-			dbaccess.MakePaymentComplete(cardData.SessionId)
+			payment := dbaccess.GetPayment(cardData.SessionId)
+			if payment.ExpireTime > time.Now().String() {
+				response.Error = ""
+				dbaccess.MakePaymentComplete(cardData.SessionId, cardData.Number)
+			} else {
+				response.Error = "Payment time expired."
+			}
 		} else {
 			response.Error = "Invalid card."
 		}

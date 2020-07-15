@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-func ValidateCard(cardData entities.CardData) bool {
-	a := strings.Split(cardData.Number, "")
+func SimpleLuhnCheck(cardNumber string) bool {
+	a := strings.Split(cardNumber, "")
 	sum := 0
 	for i, s := range a{
 		num, _ := strconv.Atoi(s)
@@ -22,4 +22,8 @@ func ValidateCard(cardData entities.CardData) bool {
 		}
 	}
 	return sum%10==0
+}
+
+func ValidateCard(cardData entities.CardData) bool {
+	return SimpleLuhnCheck(cardData.Number)
 }
