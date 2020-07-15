@@ -2,9 +2,9 @@
 package requests
 
 import (
-	dbaccess "PaymentAPI/DBAccess"
-	entities "PaymentAPI/Entities"
-	service "PaymentAPI/Service"
+	dbaccess "payment-service/DBAccess"
+	entities "payment-service/Entities"
+	service "payment-service/Service"
 	"encoding/json"
 	"fmt"
 	"github.com/go-openapi/runtime/middleware"

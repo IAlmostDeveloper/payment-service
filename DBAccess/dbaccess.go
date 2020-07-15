@@ -1,7 +1,7 @@
 package dbaccess
 
 import (
-	"PaymentAPI/Entities"
+	"payment-service/Entities"
 	"database/sql"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"

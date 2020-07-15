@@ -1,7 +1,7 @@
 package service
 
 import (
-	entities "PaymentAPI/Entities"
+	entities "payment-service/Entities"
 	"strconv"
 	"strings"
 )
