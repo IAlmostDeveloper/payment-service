@@ -24,7 +24,7 @@ func GetPayment(session_id string) entities.PaymentFromDB {
 	}
 	defer db.Close()
 	result, err := db.Query("select * from payments where session_id=$1", session_id)
-	p := entities.PaymentFromDB{}
+	var p entities.PaymentFromDB
 	for result.Next() {
 		err := result.Scan(&p.Id, &p.Sum, &p.Purpose, &p.SessionId, &p.ExpireTime, &p.Completed, &p.Card)
 		if err != nil {
@@ -34,6 +34,26 @@ func GetPayment(session_id string) entities.PaymentFromDB {
 		fmt.Println(p)
 	}
 	return p
+}
+
+func GetPaymentsInPeriod(from string, to string) []entities.PaymentFromDB {
+	db, err := sql.Open("sqlite3", "sqlite.db")
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	result, err := db.Query("select * from payments where expire_time>$1 and expire_time<$2", from, to)
+	var payments []entities.PaymentFromDB
+	for result.Next() {
+		var p entities.PaymentFromDB
+		err := result.Scan(&p.Id, &p.Sum, &p.Purpose, &p.SessionId, &p.ExpireTime, &p.Completed, &p.Card)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		payments = append(payments, p)
+	}
+	return payments
 }
 
 func InsertPayment(payment entities.Payment, session_id string, expire_time string) {

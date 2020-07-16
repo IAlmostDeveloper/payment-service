@@ -38,10 +38,25 @@ func paymentRequest(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		dbaccess.InsertPayment(payment, id.String(), time.Now().AddDate(0, 0, 7).String())
+		dbaccess.InsertPayment(payment, id.String(), time.Now().AddDate(0, 0, 7).Format("02-01-2006 15:04:05"))
 		w.Write(js)
 		fmt.Println(string(js))
 		break
+	}
+}
+
+func periodPaymentsRequest(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		var period entities.Period
+		json.NewDecoder(r.Body).Decode(&period)
+		response := dbaccess.GetPaymentsInPeriod(period.From, period.To)
+		js, err := json.Marshal(response)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Write(js)
+		fmt.Println(string(js))
 	}
 }
 
@@ -73,6 +88,7 @@ func validateCardRequest(w http.ResponseWriter, r *http.Request) {
 func HandleRequests() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/payment", paymentRequest)
+	router.HandleFunc("/payments", periodPaymentsRequest)
 	router.HandleFunc("/validate", validateCardRequest)
 
 	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
