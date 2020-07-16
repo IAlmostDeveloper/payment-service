@@ -16,7 +16,7 @@ import (
 
 var key, _ = uuid.NewUUID()
 
-func getPayment(w http.ResponseWriter, r *http.Request) {
+func GetPayment(w http.ResponseWriter, r *http.Request) {
 	var paymentResponse entities.PaymentSession
 	json.NewDecoder(r.Body).Decode(&paymentResponse)
 	payment := dbaccess.GetPayment(paymentResponse.SessionId)
@@ -28,7 +28,7 @@ func getPayment(w http.ResponseWriter, r *http.Request) {
 	w.Write(js)
 }
 
-func createPayment(w http.ResponseWriter, r *http.Request) {
+func CreatePayment(w http.ResponseWriter, r *http.Request) {
 	var payment entities.Payment
 	json.NewDecoder(r.Body).Decode(&payment)
 	id, err := uuid.NewUUID()
@@ -43,7 +43,7 @@ func createPayment(w http.ResponseWriter, r *http.Request) {
 	w.Write(js)
 }
 
-func getPaymentsInPeriod(w http.ResponseWriter, r *http.Request) {
+func GetPaymentsInPeriod(w http.ResponseWriter, r *http.Request) {
 	var period entities.Period
 	json.NewDecoder(r.Body).Decode(&period)
 	if r.Header.Get("Authorization") != key.String() {
@@ -59,7 +59,7 @@ func getPaymentsInPeriod(w http.ResponseWriter, r *http.Request) {
 	w.Write(js)
 }
 
-func validateCard(w http.ResponseWriter, r *http.Request) {
+func ValidateCard(w http.ResponseWriter, r *http.Request) {
 	var cardData entities.CardData
 	json.NewDecoder(r.Body).Decode(&cardData)
 	var response entities.CardValidationResponse
@@ -90,11 +90,11 @@ func HandleRequests() {
 	getRouter := router.Methods(http.MethodGet).Subrouter()
 	postRouter := router.Methods(http.MethodPost).Subrouter()
 
-	getRouter.HandleFunc("/payment", getPayment)
-	getRouter.HandleFunc("/payments", getPaymentsInPeriod)
+	getRouter.HandleFunc("/payment", GetPayment)
+	getRouter.HandleFunc("/payments", GetPaymentsInPeriod)
 
-	postRouter.HandleFunc("/payment", createPayment)
-	postRouter.HandleFunc("/validate", validateCard)
+	postRouter.HandleFunc("/payment", CreatePayment)
+	postRouter.HandleFunc("/validate", ValidateCard)
 
 	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
 	sh := middleware.Redoc(opts, nil)
