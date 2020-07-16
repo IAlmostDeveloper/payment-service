@@ -33,7 +33,6 @@ func GetPayment(session_id string) entities.PaymentFromDB {
 			fmt.Println(err)
 			continue
 		}
-		fmt.Println(p)
 	}
 	return p
 }
