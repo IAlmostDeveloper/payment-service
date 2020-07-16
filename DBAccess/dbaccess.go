@@ -44,7 +44,7 @@ func GetPaymentsInPeriod(from string, to string) []entities.PaymentFromDB {
 		panic(err)
 	}
 	defer db.Close()
-	result, err := db.Query("select * from payments where created_time>$1 and created_time<$2", from, to)
+	result, err := db.Query("select * from payments where created_time>=$1 and created_time<=$2", from, to)
 	var payments []entities.PaymentFromDB
 	for result.Next() {
 		var p entities.PaymentFromDB
