@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	entities "payment-service/Entities"
 	"strconv"
 	"strings"
@@ -25,7 +24,6 @@ func SimpleLuhnCheck(cardNumber string) bool {
 			sum += num
 		}
 	}
-	fmt.Println(sum)
 	return sum%10 == 0 && sum > 0
 }
 

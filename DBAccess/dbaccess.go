@@ -26,12 +26,14 @@ func GetPayment(session_id string) entities.PaymentFromDB {
 	defer db.Close()
 	result, err := db.Query("select * from payments where session_id=$1", session_id)
 	var p entities.PaymentFromDB
-	for result.Next() {
-		err := result.Scan(&p.Id, &p.Sum, &p.Purpose, &p.SessionId,
-			&p.CreatedTime, &p.CompletedTime, &p.ExpireTime, &p.Completed, &p.Card)
-		if err != nil {
-			fmt.Println(err)
-			continue
+	if result != nil{
+		for result.Next() {
+			err := result.Scan(&p.Id, &p.Sum, &p.Purpose, &p.SessionId,
+				&p.CreatedTime, &p.CompletedTime, &p.ExpireTime, &p.Completed, &p.Card)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
 		}
 	}
 	return p
