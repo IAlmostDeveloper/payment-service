@@ -1,4 +1,3 @@
-// swagger: meta
 package requests
 
 import (
@@ -14,6 +13,8 @@ import (
 	service "payment-service/Service"
 	"time"
 )
+
+var key, _ = uuid.NewUUID()
 
 func paymentRequest(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
@@ -38,7 +39,8 @@ func paymentRequest(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		dbaccess.InsertPayment(payment, id.String(), time.Now().AddDate(0, 0, 7).Format("02-01-2006 15:04:05"))
+		dbaccess.InsertPayment(payment, id.String(), time.Now().Format("02-01-2006 15:04:05"),
+			time.Now().AddDate(0, 0, 7).Format("02-01-2006 15:04:05"))
 		w.Write(js)
 		fmt.Println(string(js))
 		break
@@ -49,6 +51,10 @@ func periodPaymentsRequest(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		var period entities.Period
 		json.NewDecoder(r.Body).Decode(&period)
+		if r.Header.Get("Authorization") != key.String() {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
 		response := dbaccess.GetPaymentsInPeriod(period.From, period.To)
 		js, err := json.Marshal(response)
 		if err != nil {
@@ -56,7 +62,6 @@ func periodPaymentsRequest(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.Write(js)
-		fmt.Println(string(js))
 	}
 }
 
@@ -69,7 +74,7 @@ func validateCardRequest(w http.ResponseWriter, r *http.Request) {
 			payment := dbaccess.GetPayment(cardData.SessionId)
 			if payment.ExpireTime > time.Now().String() {
 				response.Error = ""
-				dbaccess.MakePaymentComplete(cardData.SessionId, cardData.Number)
+				dbaccess.MakePaymentComplete(cardData.SessionId, time.Now().Format("02-01-2006 15:04:05"), cardData.Number)
 			} else {
 				response.Error = "Payment time expired."
 			}
@@ -86,6 +91,7 @@ func validateCardRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleRequests() {
+	fmt.Println(key.String())
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/payment", paymentRequest)
 	router.HandleFunc("/payments", periodPaymentsRequest)

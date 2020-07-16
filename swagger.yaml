@@ -27,7 +27,9 @@ paths:
                 sum: 50000
                 purpose: An example payment
                 session_id: ecef274b-c4d9-11ea-9c98-16e54378dfba
-                expire_time: 2020-07-22 20:22:06.3006211 +0300 MSK
+                created_time: 16-07-2020 00:00:00
+                completed_time: 18-07-2020 00:00:00
+                expire_time: 23-07-2020 00:00:00
                 completed: true
                 card: "4561261212345467"
     post:
@@ -50,6 +52,37 @@ paths:
                 $ref: '#/components/schemas/SessionId'
               example:
                 session_id: ecef274b-c4d9-11ea-9c98-16e54378dfba
+  /payments:
+    get:
+      summary: Gets payments in some date period
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Period'
+            example:
+              from: 16-07-2020 00:00:00
+              to: 25-07-2020 00:00:00
+      responses:
+        '200':    # status code
+          description: A payment JSON object
+          content:
+            application/json:
+              schema:
+                type: array
+              example:
+                - {
+                  "id": 2,
+                  "sum": 20000,
+                  "purpose": "Freelance salary",
+                  "session_id": "0403703f-c741-11ea-b0d2-16e54378dfba",
+                  "created_time": "16-07-2020 11:47:44",
+                  "completed_time": "17-07-2020 11:55:55",
+                  "expire_time": "23-07-2020 11:47:44",
+                  "completed": true,
+                  "card": "4561261212345467"
+                }
   /validate:
     post:
       summary: Validates card and makes payment completed
@@ -97,11 +130,23 @@ components:
           type: string
         session_id:
           type: string
+        created_time:
+          type: string
+        completed_time:
+          type: string
         expire_time:
           type: string
         completed:
           type: boolean
         card:
+          type: string
+    Period:
+      title: a date period
+      type: object
+      properties:
+        from:
+          type: string
+        to:
           type: string
     CreatePaymentRequest:
       title: a payment data
@@ -131,5 +176,3 @@ components:
       properties:
         error:
           type: string
-            
-    

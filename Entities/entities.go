@@ -6,13 +6,15 @@ type Payment struct {
 }
 
 type PaymentFromDB struct {
-	Id         int    `json:"id"`
-	Sum        int    `json:"sum"`
-	Purpose    string `json:"purpose"`
-	SessionId  string `json:"session_id"`
-	ExpireTime string `json:"expire_time"`
-	Completed  bool   `json:"completed"`
-	Card       string `json:"card"`
+	Id            int    `json:"id"`
+	Sum           int    `json:"sum"`
+	Purpose       string `json:"purpose"`
+	SessionId     string `json:"session_id"`
+	CreatedTime   string `json:"created_time"`
+	CompletedTime string `json:"completed_time"`
+	ExpireTime    string `json:"expire_time"`
+	Completed     bool   `json:"completed"`
+	Card          string `json:"card"`
 }
 
 type PaymentSession struct {
