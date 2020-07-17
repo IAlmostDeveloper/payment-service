@@ -14,3 +14,6 @@ JSON API, имитирующий работу платежной системы
 ```docker run -it -p 8080:8080 ialmostdeveloper/payment-service```
 ## Docker-compose
 ```docker-compose up```
+
+## Документация
+- /docs
