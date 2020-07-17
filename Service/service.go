@@ -1,7 +1,6 @@
 package service
 
 import (
-	entities "payment-service/Entities"
 	"strconv"
 	"strings"
 )
@@ -25,8 +24,4 @@ func SimpleLuhnCheck(cardNumber string) bool {
 		}
 	}
 	return sum%10 == 0 && sum > 0
-}
-
-func ValidateCard(cardData entities.CardData) bool {
-	return SimpleLuhnCheck(cardData.Number)
 }
