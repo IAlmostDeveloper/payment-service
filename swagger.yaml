@@ -55,6 +55,13 @@ paths:
   /payments:
     get:
       summary: Gets payments in some date period
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: true
+          example: 657a3d34-c7ea-11ea-b96f-16e54378dfba
       requestBody:
         required: true
         content:
@@ -82,6 +89,17 @@ paths:
                   "expire_time": "23-07-2020 11:47:44",
                   "completed": true,
                   "card": "4561261212345467"
+                }
+                -  {
+                  "id": 5,
+                  "sum": 20000,
+                  "purpose": "Freelance salary",
+                  "session_id": "7b3651f3-c7ea-11ea-b96f-16e54378dfba",
+                  "created_time": "17-07-2020 08:00:49",
+                  "completed_time": "17-07-2020 08:03:16",
+                  "expire_time": "24-07-2020 08:00:49",
+                  "completed": true,
+                  "card": "4561236545233218"
                 }
   /validate:
     post:

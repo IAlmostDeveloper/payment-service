@@ -63,7 +63,7 @@ func ValidateCard(w http.ResponseWriter, r *http.Request) {
 	var cardData entities.CardData
 	json.NewDecoder(r.Body).Decode(&cardData)
 	var response entities.CardValidationResponse
-	if service.ValidateCard(cardData) {
+	if service.SimpleLuhnCheck(cardData.Number) {
 		payment := dbaccess.GetPayment(cardData.SessionId)
 		if payment.ExpireTime > time.Now().String() {
 			response.Error = ""

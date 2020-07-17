@@ -13,8 +13,8 @@ func CreateDB() {
 		panic(err)
 	}
 	defer db.Close()
-	db.Exec("create table if not exists payments(id integer primary key autoincrement , " +
-		"sum integer, purpose text, session_id text, created_time text, " +
+	db.Exec("create table if not exists payments(id integer primary key autoincrement," +
+		"sum integer, purpose text, session_id text, created_time text," +
 		"completed_time text, expire_time text, completed numeric, card text)")
 }
 
@@ -26,7 +26,7 @@ func GetPayment(session_id string) entities.PaymentFromDB {
 	defer db.Close()
 	result, err := db.Query("select * from payments where session_id=$1", session_id)
 	var p entities.PaymentFromDB
-	if result != nil{
+	if result != nil {
 		for result.Next() {
 			err := result.Scan(&p.Id, &p.Sum, &p.Purpose, &p.SessionId,
 				&p.CreatedTime, &p.CompletedTime, &p.ExpireTime, &p.Completed, &p.Card)
@@ -66,7 +66,8 @@ func InsertPayment(payment entities.Payment, session_id string, created_time str
 		panic(err)
 	}
 	defer db.Close()
-	db.Exec("insert into payments(sum, purpose, session_id, created_time, completed_time, expire_time, completed, card) "+
+	db.Exec("insert into payments(sum, purpose, session_id, created_time," +
+		"completed_time, expire_time, completed, card) "+
 		"values($1, $2, $3, $4, '', $5, false, '')",
 		payment.Sum, payment.Purpose, session_id, created_time, expire_time)
 }

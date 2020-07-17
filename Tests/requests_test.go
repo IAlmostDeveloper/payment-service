@@ -47,6 +47,7 @@ func TestCreateAndGetPaymentRequests(t *testing.T) {
 	}
 	var payment entities.PaymentFromDB
 	json.NewDecoder(rr.Body).Decode(&payment)
+
 	assert.Equal(t, payment.Sum, 50000)
 	assert.Equal(t, payment.Purpose, "Example")
 }
