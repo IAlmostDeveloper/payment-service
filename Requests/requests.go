@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/google/uuid"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -87,6 +88,8 @@ func HandleRequests() {
 	fmt.Println(key.String())
 	router := mux.NewRouter()
 
+
+
 	getRouter := router.Methods(http.MethodGet).Subrouter()
 	postRouter := router.Methods(http.MethodPost).Subrouter()
 
@@ -102,5 +105,9 @@ func HandleRequests() {
 	getRouter.Handle("/docs", sh)
 	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	origins := handlers.AllowedOrigins([]string{"*"})
+	methods := handlers.AllowedMethods([]string{"POST", "GET"})
+	headers := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+
+	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(headers, methods, origins)(router)))
 }
